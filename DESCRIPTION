@@ -1,0 +1,20 @@
+Package: qq
+Type: Package
+Title: Q-Q plots and more
+Version: 0.0.1
+Date: 2017-04-04
+Author: Andrey Ziyatdinov
+Maintainer: Andrey Ziyatdinov <andrey@example.com>
+Description: Post-gwas processing: plots, diagnostics, etc 
+License: GPL (>= 3)
+Imports:
+    dplyr,
+    ggplot2
+Suggests:
+    testthat,
+    knitr,
+    rmarkdown
+Collate:
+    'package.R'
+    'plots.R'
+RoxygenNote: 6.0.1
