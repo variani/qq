@@ -13,7 +13,7 @@ qq_inflation <- function(pvals, thr_pval, ...)
 qq_theme <- function() theme_minimal()
 
 #' @export
-qq_plot <- function(pvals, title, ...)
+qq_plot <- function(pvals, title, size = NULL, linetype = 3, ...)
 {
   ### filter `pvals`
   pvals <- pvals[!is.na(pvals)]
@@ -27,10 +27,16 @@ qq_plot <- function(pvals, title, ...)
   
   ### plot
   dat <- data_frame(val0 = -log10(pvals0), val = -log10(pvals))
-  p <- ggplot(dat, aes(val0, val)) + geom_point() 
+  p <- ggplot(dat, aes(val0, val)) 
+  
+  if(is.null(size)) {
+    p <- p + geom_point() 
+  } else {
+    p <- p + geom_point(size = size) 
+  }
   
   # line
-  p <- p + geom_abline(linetype = 3)
+  p <- p + geom_abline(linetype = linetype)
   
   # x/y limits
   lims <- with(dat,
