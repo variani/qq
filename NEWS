@@ -1,0 +1,11 @@
+
+qq 0.0.2
+========
+
+* Computation of the `lambda` inflation factor is fixed. 
+  Now both parts in the ratio are like 'qchisq(..., lower.tail = FALSE)`.
+
+qq 0.0.1
+========
+
+* The first version.

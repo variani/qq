@@ -6,7 +6,7 @@ qq_inflation <- function(pvals, thr_pval, ...)
   #  pvals <- pvals[pvals > thr_pval]
   #}
   
-  median(qchisq(pvals, 1, lower.tail = FALSE)) / qchisq(0.5, 1)
+  median(qchisq(pvals, 1, lower.tail = FALSE)) / qchisq(0.5, 1, lower.tail = FALSE)
 }
 
 #' @export

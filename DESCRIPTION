@@ -1,7 +1,7 @@
 Package: qq
 Type: Package
 Title: Q-Q plots and more
-Version: 0.0.1
+Version: 0.0.2
 Date: 2017-04-04
 Author: Andrey Ziyatdinov
 Maintainer: Andrey Ziyatdinov <andrey@example.com>
