@@ -1,19 +1,19 @@
 
 #' @export
-qq_inflation <- function(pvals, thr_pval, ...)
+qq_inflation <- function(pvals, df = 1, thr_pval,  ...)
 {
   #if(!missing(thr_pval)) {
   #  pvals <- pvals[pvals > thr_pval]
   #}
   
-  median(qchisq(pvals, 1, lower.tail = FALSE)) / qchisq(0.5, 1, lower.tail = FALSE)
+  median(qchisq(pvals, df, lower.tail = FALSE)) / qchisq(0.5, df, lower.tail = FALSE)
 }
 
 #' @export
 qq_theme <- function() theme_minimal()
 
 #' @export
-qq_plot <- function(pvals, 
+qq_plot <- function(pvals, df = 1,
   title, 
   size = NULL, color = NULL, linetype = 3, lims = NULL, ...)
 {
@@ -64,7 +64,7 @@ qq_plot <- function(pvals,
   p <- p + labs(x = "Expected -log(pval)", y = "Observed -log(pval)")
   
   # subtitle
-  lambda <- qq_inflation(pvals, ...)
+  lambda <- qq_inflation(pvals, df = df, ...)
   
   p <- p + labs(subtitle = paste0("inflation: ", round(lambda, 2)))
   
