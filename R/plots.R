@@ -6,6 +6,9 @@ qq_inflation <- function(pvals, df = 1, thr_pval,  ...)
   #  pvals <- pvals[pvals > thr_pval]
   #}
   
+  pvals <- pvals[!(is.infinite(pvals) | is.na(pvals))]
+  #pvals[pvals == 0] <- min(pvals[pvals != 0])
+  
   median(qchisq(pvals, df, lower.tail = FALSE)) / qchisq(0.5, df, lower.tail = FALSE)
 }
 
