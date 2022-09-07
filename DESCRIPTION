@@ -7,16 +7,23 @@ Author: Andrey Ziyatdinov
 Maintainer: Andrey Ziyatdinov <andrey@example.com>
 Description: Post-gwas processing: plots, diagnostics, etc 
 License: GPL (>= 3)
-Imports:
-    dplyr,
-    ggplot2
 Suggests:
+    dplyr,
+    tidyr,
+    ggplot2,
+    cowplot,
+    latex2exp,
+    glue,
     testthat,
     knitr,
     rmarkdown
 Collate:
     'package.R'
+    'data.R'
     'correct.R'
     'plots.R'
     'manh.R'
-RoxygenNote: 6.0.1
+    'locuszoom.R'
+    'zzz.R'
+RoxygenNote: 7.2.0
+Encoding: UTF-8

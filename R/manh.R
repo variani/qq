@@ -1,4 +1,21 @@
+#' @export
+manhattan_plot <- function(tab, p = "pval", snp = "predictor", ...)
+{
+  # assign column names as required by qqman
+  tab$p <- tab[[p]]
+  tab$snp <- tab[[snp]]
+  tab <- tab %>% select(p, snp)
 
+  # extract chr:pos from snp name
+  info <- tab$snp %>% strsplit(":") %>% do.call(rbind, .) %>% .[, 1:2] %>% as_tibble
+  names(info) <- c("chr", "pos")
+  info <- mutate(info, chr = as.integer(chr), pos = as.integer(pos))
+
+  tab <- bind_cols(tab, info)
+
+  # plot with qqman
+  qqman::manhattan(tab, chr = "chr", bp = "pos", p = "p", ...)
+}
 
 #' Manhatten plots
 #'

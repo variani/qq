@@ -3,8 +3,4 @@
 \docType{package}
 \name{copdgeneQQ}
 \alias{copdgeneQQ}
-\alias{copdgeneQQ-package}
 \title{Package: qq}
-\description{
-Package: qq
-}
