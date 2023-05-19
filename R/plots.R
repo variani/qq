@@ -16,10 +16,11 @@ qq_inflation <- function(pvals, df = 1, thr_pval,  ...)
 qq_theme <- function() theme_minimal()
 
 #' @export
-qq_plot <- function(pvals, df = 1,
+qq_plot <- function(pvals, df = 1, pval_min = NULL,
   title, tests = NULL,
   size = NULL, linetype = 3, lims = NULL, 
   log = FALSE, square = FALSE, thin = TRUE,
+  pos_legend = c(0.05, 0.95),
   ...)
 {
   ### conver to table
@@ -34,6 +35,10 @@ qq_plot <- function(pvals, df = 1,
   if(log) {
     dat = mutate_all(dat, function(x) 10^(-x))
   }
+  ### cap?
+  if(!is.null(pval_min)) {
+    dat = mutate_all(dat, function(x) ifelse(x < pval_min, pval_min, x))
+  }
 
   ## inflation values
   vals_lambda = sapply(dat, qq_inflation)
@@ -46,6 +51,9 @@ qq_plot <- function(pvals, df = 1,
   dat = drop_na(dat)
   
   num_pvals <- nrow(dat)
+  if(num_pvals == 0) {
+    return(NULL)
+  }
   num_test = ncol(dat)
   
   ### prepare `pvals`
@@ -117,9 +125,10 @@ qq_plot <- function(pvals, df = 1,
   p <- p + labs(x = TeX("Expected $-log_{10}(P)$"), y = TeX("Observed $-log_{10}(P)$"))
   
   # subtitle
-  # lambda <- qq_inflation(pvals, df = df, ...)
-  
-  # p <- p + labs(subtitle = TeX(glue("$\\lambda = $", round(lambda, 2))))
+  if(pos_legend[1] == 'none') {
+    lambda = qq_inflation(pvals, df = df, ...)
+    p = p + labs(subtitle = TeX(glue("$\\lambda = $", round(lambda, 2))))
+  }
 
   str_lambda = sapply(vals_lambda, function(x) formatC(x, format = 'f', digits = 3))
   if(num_test == 1) {
@@ -130,7 +139,7 @@ qq_plot <- function(pvals, df = 1,
     cols = viridis(num_test)
   }
   p = p + scale_color_manual(values = cols, labels = labs_col)
-  p = p + theme(legend.position = c(0.05, 0.95)) + labs(color = NULL)
+  p = p + theme(legend.position = pos_legend) + labs(color = NULL)
 
   return(p)
 }

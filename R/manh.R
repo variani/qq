@@ -24,11 +24,13 @@ manhattan_plot <- function(tab, p = "pval", snp = "predictor", ...)
 #' tab22 <- filter(tab, Chr == 22)
 #'
 #' @export
-qq_manh <- function(tab)
+qq_manh <- function(tab, cols = c(snp = 'MarkerName'),
+  p_thr = 5e-8, lab_chr = NULL)
 {
-  tab <- tab20
-  
-  tab <- rename(tab, snp = MarkerName, chr = Chr, pos = Pos, pval = P.value)
+  stopifnot(require(latex2exp))
+
+  tab <- select(tab, cols)
+  # tab <- rename(tab, snp = MarkerName, chr = Chr, pos = Pos, pval = P.value)
   
   tab <- select(tab, snp, chr, pos, pval) %>%
     arrange(chr, pos) %>% mutate(ord = seq(1, n()))
@@ -43,11 +45,16 @@ qq_manh <- function(tab)
     select(ord, chr) %>% mutate(chr = as.character(chr))
     
   xbreaks <- bind_rows(xbreaks_side, xbreaks_mid) %>% arrange(ord)
+  xbreaks <- filter(xbreaks, chr != "")
+  if(!is.null(lab_chr)) {
+    xbreaks <- mutate(xbreaks, chr = ifelse(chr %in% lab_chr, chr, ""))
+  }
 
   ### plot
   p <- ggplot(tab, aes(ord, -log10(pval))) + geom_point()
-  
-  p <- p + scale_x_continuous("Chromosome", breaks = xbreaks$ord, labels = xbreaks$chr)
+  p <- p + geom_hline(yintercept = -log10(p_thr), color = 'red')
+  p <- p + scale_x_continuous(breaks = xbreaks$ord, labels = xbreaks$chr)
+  p <- p + labs(x = 'Chromosome', y = TeX("$-log_{10}(P)$"))
 
   return(p)
 }
