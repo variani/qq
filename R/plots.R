@@ -15,15 +15,19 @@ qq_inflation <- function(pvals, df = 1, thr_pval,  ...)
 #' @export
 qq_theme <- function() theme_minimal()
 
+fun_format_big = function(x) formatC(x, format = "d", big.mark = ",")
+
 #' @export
 qq_plot <- function(pvals, df = 1, pval_min = NULL,
   title, tests = NULL,
   size = NULL, linetype = 3, lims = NULL, 
   log = FALSE, square = FALSE, thin = TRUE,
   pos_legend = c(0.05, 0.95),
+  full_stats = FALSE,
   ...)
 {
   ### conver to table
+  pvals_input = pvals
   if(NCOL(pvals) == 1) {
     dat = tibble(val = pvals)
   } else {
@@ -134,12 +138,25 @@ qq_plot <- function(pvals, df = 1, pval_min = NULL,
   if(num_test == 1) {
     labs_col = lapply(sprintf(r'($\lambda = $%s)', str_lambda), TeX)
     cols = 'black'
+    p = p + scale_color_manual(values = cols) + theme(legend.position = 'none') 
+
+    if(full_stats) {
+      str_stats = glue(
+        'lambda = {round(vals_lambda, 2)}', '\n',
+        '# Total = ', length(pvals_input) %>% fun_format_big, '\n',
+        '# Displayed = ', nrow(dat) %>% fun_format_big, '\n',
+        '# NAs = ', sum(is.na(pvals_input)))
+      p = p + annotation_compass(str_stats, 'NW')
+    } else {
+      str_stats = TeX(sprintf(r'($\lambda = $%s)', str_lambda))
+      p = p + annotation_compass(str_stats, 'NW')
+    }
   } else {
     labs_col = lapply(sprintf(r'(%s: $\lambda = $%s)', tests, str_lambda), TeX)
     cols = viridis(num_test)
+    p = p + scale_color_manual(values = cols, labels = labs_col)
+    p = p + theme(legend.position = pos_legend) + labs(color = NULL)
   }
-  p = p + scale_color_manual(values = cols, labels = labs_col)
-  p = p + theme(legend.position = pos_legend) + labs(color = NULL)
 
   return(p)
 }

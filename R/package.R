@@ -7,7 +7,7 @@
 #' @importFrom cowplot theme_minimal_grid
 #' @importFrom viridis viridis
 #'
-#' @importFrom tidyr drop_na
+#' @importFrom tidyr drop_na pivot_longer
 #'
 #' @import dplyr
 #' @import ggplot2

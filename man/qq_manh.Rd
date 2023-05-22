@@ -4,7 +4,7 @@
 \alias{qq_manh}
 \title{Manhatten plots}
 \usage{
-qq_manh(tab)
+qq_manh(tab, cols = c(snp = "MarkerName"), p_thr = 5e-08, lab_chr = NULL)
 }
 \description{
 Manhatten plots
