@@ -62,11 +62,13 @@ qq_plot <- function(pvals, df = 1, pval_min = NULL,
   }
 
   ## inflation values
+  n_dat = nrow(dat)
   vals_lambda = sapply(dat, qq_inflation)
 
   ### filter `pvals`
   dat = apply(dat, 2, function(pvals) {
-    pvals = ifelse(is.infinite(pvals) | is.na(pvals), NA, pvals)
+    pvals = ifelse(is.infinite(pvals) | is.na(pvals), NA, 
+      ifelse(pvals < 0, NA, pvals))
     ifelse(pvals %in% 0, min(pvals, na.rm = TRUE), pvals)
   }) %>% bind_cols
   dat = drop_na(dat)
@@ -161,8 +163,9 @@ qq_plot <- function(pvals, df = 1, pval_min = NULL,
       str_stats = glue(
         'lambda = {round(vals_lambda, 2)}', '\n',
         '# Total = ', length(pvals_input) %>% fun_format_big, '\n',
-        '# Displayed = ', nrow(dat) %>% fun_format_big, '\n',
-        '# NAs = ', sum(is.na(pvals_input)))
+        '# Displayed = ', n_dat %>% fun_format_big, '\n',
+        '# NAs = ', sum(is.na(pvals_input)), '\n',
+        '# Inf = ', sum(is.infinite(pvals_input)))
       p = p + annotation_compass(str_stats, 'NW')
     } else {
       str_stats = TeX(sprintf(r'($\lambda = $%s)', str_lambda))
