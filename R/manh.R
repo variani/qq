@@ -24,16 +24,38 @@ manhattan_plot <- function(tab, p = "pval", snp = "predictor", ...)
 #' tab22 <- filter(tab, Chr == 22)
 #'
 #' @export
-qq_manh <- function(tab, cols = c(snp = 'MarkerName'),
+qq_manh <- function(tab, cols = c(snp = 'snp', chr = 'chr', pos = 'pos', pval = 'pval'),
   p_thr = 5e-8, lab_chr = NULL)
 {
   stopifnot(require(latex2exp))
 
-  tab <- select(tab, cols)
-  # tab <- rename(tab, snp = MarkerName, chr = Chr, pos = Pos, pval = P.value)
-  
-  tab <- select(tab, snp, chr, pos, pval) %>%
-    arrange(chr, pos) %>% mutate(ord = seq(1, n()))
+  ## check old names from cols
+  for(col in cols) {
+    if(!(col %in% colnames(tab))) {
+      warning(paste('column', col, ' is not present'))
+      return(invisible())
+    }
+  }
+  tab <- rename(tab, cols)
+
+  ## rename columns
+  cols_new = c('snp', 'chr', 'pos', 'pval')
+  for(col in cols_new) {
+    if(!(col %in% colnames(tab))) {
+      warning(paste('column', col, ' is required; use "cols" argument to specify replacement'))
+      return(invisible())
+    }
+  }
+  tab <- select(tab, snp, chr, pos, pval)
+
+  ## convert chr/pos to integers
+  tab = mutate_at(tab, c('chr', 'pos'), as.integer)
+  stopifnot(!any(is.na(tab$chr))); stopifnot(!any(is.na(tab$pos)))
+
+  tab = mutate(tab, chr_even = factor(chr %% 2))
+
+  ## order SNPs
+  tab = arrange(tab, chr, pos) %>% mutate(ord = seq(1, n()))
 
   ### compute breaks on x axis
   xbreaks_side <- group_by(tab, chr) %>% 
@@ -51,10 +73,11 @@ qq_manh <- function(tab, cols = c(snp = 'MarkerName'),
   }
 
   ### plot
-  p <- ggplot(tab, aes(ord, -log10(pval))) + geom_point()
-  p <- p + geom_hline(yintercept = -log10(p_thr), color = 'red')
+  p <- ggplot(tab, aes(ord, -log10(pval))) + geom_point(aes(color = chr_even))
+  p <- p + geom_hline(yintercept = -log10(p_thr), color = 2)
   p <- p + scale_x_continuous(breaks = xbreaks$ord, labels = xbreaks$chr)
   p <- p + labs(x = 'Chromosome', y = TeX("$-log_{10}(P)$"))
+  p = p + scale_color_manual(values = c(8, 1), guide = 'none')
 
   return(p)
 }
